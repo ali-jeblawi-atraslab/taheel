@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Taheel_Project.Middlewares;
 
 namespace Taheel_Project
 {
@@ -26,7 +27,10 @@ namespace Taheel_Project
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
+            {
+                builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+            }));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -37,7 +41,7 @@ namespace Taheel_Project
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
+            //app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => {
 
@@ -45,7 +49,11 @@ namespace Taheel_Project
                  c.RoutePrefix = "swagger";
 
             });
-            
+
+            //app.UseMiddleware<EncryptionMiddleware>();
+
+
+            app.UseCors("ApiCorsPolicy");
 
             app.UseHttpsRedirection();
 
